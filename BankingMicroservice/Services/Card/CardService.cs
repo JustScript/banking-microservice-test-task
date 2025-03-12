@@ -4,10 +4,18 @@ namespace BankingMicroservice.Services
 {
     public class CardService : ICardService
     {
+        private readonly ILogger<CardService> _logger;
         private readonly Dictionary<string, Dictionary<string, CardDetails>> _userCards = CreateSampleUserCards();
+
+        public CardService(ILogger<CardService> logger)
+        {
+            _logger = logger;
+        }
 
         public async Task<CardDetails?> GetCardDetails(string userId, string cardNumber)
         {
+            _logger.LogInformation($"Fetching card details for userId: {userId}, cardNumber: {cardNumber}");
+
             // At this point, we would typically make an HTTP call to an external service 
             // to fetch the data. For this example we use generated sample data. 
             await Task.Delay(1000);
@@ -15,6 +23,7 @@ namespace BankingMicroservice.Services
             if (!_userCards.TryGetValue(userId, out var cards)
                 || !cards.TryGetValue(cardNumber, out var cardDetails))
             {
+                _logger.LogWarning($"Card not found for userId: {userId}, cardNumber: {cardNumber}");
                 return null;
             }
 

@@ -1,5 +1,7 @@
 using BankingMicroservice.Models;
 using BankingMicroservice.Services;
+using Microsoft.Extensions.Logging;
+using Moq;
 
 namespace BankingMicroserviceTests
 {
@@ -37,7 +39,8 @@ namespace BankingMicroserviceTests
         public void PdfExamplesShouldPass(CardDetails card, List<string> expected)
         {
             // Arrange
-            IActionsService service = new ActionsService();
+            var loggerMock = new Mock<ILogger<ActionsService>>();
+            IActionsService service = new ActionsService(loggerMock.Object);
 
             // Act
             var output = service.GetAllowedActions(card);

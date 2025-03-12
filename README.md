@@ -13,7 +13,7 @@
 - C# .NET 8
 - ASP.NET Web API (Minimal APIs)
 - Dependency Injection
-- XUnit
+- XUnit, Moq
 - Swagger
 - Docker & docker-compose
 

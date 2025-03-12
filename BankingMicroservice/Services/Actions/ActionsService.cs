@@ -5,17 +5,38 @@ namespace BankingMicroservice.Services
 {
     public class ActionsService : IActionsService
     {
+        private readonly ILogger<ActionsService> _logger;
+
+        public ActionsService(ILogger<ActionsService> logger)
+        {
+            _logger = logger;
+        }
+
         public IEnumerable<string> GetAllowedActions(CardDetails cardDetails)
         {
+            if (cardDetails == null)
+            {
+                _logger.LogError("CardDetails is null");
+                throw new ArgumentNullException(nameof(cardDetails));
+            }
+
+            _logger.LogInformation("Getting allowed actions for card: {CardNumber}", cardDetails.CardNumber);
+
             var allowedActionRules = GetAllowedActionRules(cardDetails);
 
-            return allowedActionRules
+            var allowedActions = allowedActionRules
                 .Where(rule => rule.IsMatch(cardDetails))
                 .Select(rule => rule.Action.ToString().ToUpper());
+
+            _logger.LogInformation("Allowed actions for card {CardNumber}: {AllowedActions}", cardDetails.CardNumber, string.Join(", ", allowedActions));
+
+            return allowedActions;
         }
 
         private IEnumerable<ActionPermissions> GetAllowedActionRules(CardDetails cardDetails)
         {
+            _logger.LogInformation("Getting allowed action rules for card: {CardNumber}", cardDetails.CardNumber);
+            
             return new List<ActionPermissions>
             {
                 new ActionPermissions(
